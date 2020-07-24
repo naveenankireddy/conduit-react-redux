@@ -1,26 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import { allArticles } from "./store/actions";
+import { connect } from "react-redux";
+import Tags from './Tags'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  componentDidMount() {
+    fetch("https://conduit.productionready.io/api/articles?limit=20&offset=0")
+      .then((res) => res.json())
+      .then(({ articles }) => {
+        this.props.dispatch(allArticles(articles));
+      });
+  }
+  render() {
+
+    const { articles } = this.props;
+
+    return (
+      <div className="App">
+        <ul>
+          {articles.map((article) => {
+            return (
+              <li>
+                <h2>{article.title}</h2>
+                <p>{article.description}</p>
+              </li>
+            );
+          })}
+        </ul>
+        <Tags />
+      </div>
+    );
+  }
 }
 
-export default App;
+function mapState({articles}) {
+  return { articles };
+}
+
+export default connect(mapState)(App);
