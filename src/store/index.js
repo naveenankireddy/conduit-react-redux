@@ -1,4 +1,5 @@
-import { createStore } from "redux";
+import { createStore, applyMiddleware } from "redux";
+import {composeWithDevTools} from 'redux-devtools-extension'
 import { ALL_ARTICLES, ALL_TAGS } from "./type";
 
 let initialState = {
@@ -23,4 +24,12 @@ function reducer(state = initialState, action) {
   }
 }
 
-export const store = createStore(reducer);
+let thunk = (store) => next => action => {
+    
+    if(action.type === 'fetch'){
+        fetch(action.url).then((res) => res.json()).then(data => store.dispatch(action.fallBack(data)))
+    }
+    return next(action)
+}
+
+export const store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)));

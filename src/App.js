@@ -1,19 +1,18 @@
 import React from "react";
 import "./App.css";
-import { allArticles } from "./store/actions";
+import { fetchArticles } from "./store/actions";
 import { connect } from "react-redux";
-import Tags from './Tags'
+import Tags from "./Tags";
 
 class App extends React.Component {
   componentDidMount() {
-    fetch("https://conduit.productionready.io/api/articles?limit=20&offset=0")
-      .then((res) => res.json())
-      .then(({ articles }) => {
-        this.props.dispatch(allArticles(articles));
-      });
+    this.props.dispatch(
+      fetchArticles(
+        "https://conduit.productionready.io/api/articles?limit=20&offset=0"
+      )
+    );
   }
   render() {
-
     const { articles } = this.props;
 
     return (
@@ -23,6 +22,7 @@ class App extends React.Component {
             return (
               <li>
                 <h2>{article.title}</h2>
+                <img src={article.author.image} alt="img" />
                 <p>{article.description}</p>
               </li>
             );
@@ -34,7 +34,7 @@ class App extends React.Component {
   }
 }
 
-function mapState({articles}) {
+function mapState({ articles }) {
   return { articles };
 }
 

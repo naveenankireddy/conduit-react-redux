@@ -1,19 +1,17 @@
 import React from "react";
 import "./App.css";
-import { allTags } from "./store/actions";
+import { fetchTags } from "./store/actions";
 import { connect } from "react-redux";
 
 class Tags extends React.Component {
   componentDidMount() {
-    fetch("https://conduit.productionready.io/api/tags")
-      .then((res) => res.json())
-      .then(({tags}) => {
-        this.props.dispatch(allTags(tags));
-      });
+    this.props.dispatch(
+      fetchTags("https://conduit.productionready.io/api/tags")
+    );
   }
-  render() {
 
-    const { tags } = this.props;
+  render() {
+    const { tags, articles } = this.props;
 
     return (
       <div className="">
@@ -26,13 +24,14 @@ class Tags extends React.Component {
             );
           })}
         </ul>
+        <button>{articles.length}</button>
       </div>
     );
   }
 }
 
-function mapState({tags}) {
-  return { tags };
+function mapState(state) {
+  return { ...state };
 }
 
 export default connect(mapState)(Tags);
